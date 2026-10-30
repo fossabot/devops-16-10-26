@@ -43,7 +43,6 @@ def test_tarefa_criada():
         "concluida": False,
         "criada_em": str(DATA),
     }
-
 # 3. Implementar um teste unitário para a rota /tarefas/{id} (PUT)
 def test_tarefas_put():
     global DATA_CONCLUSAO
