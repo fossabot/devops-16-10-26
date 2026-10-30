@@ -110,13 +110,20 @@ async def apagar_tarefa(id_tarefa: int):
         indice += 1
     return {"mensagem": "Tarefa não existe"}
 
+@APP.get("/")
+async def index():
+    """ Rota raíz. """
+    return {"mensagem": "Olá, mundo!"}
+
 # GET /autor Retorna o nome do autor
 @APP.get("/autor")
 async def autor():
     """ Rota para identificar o autor da aplicação. """
     return {"mensagem": "Thionas Nascimento"}
 
-@APP.get("/")
-async def index():
-    """ Rota raíz. """
-    return {"mensagem": "Olá, mundo!"}
+# 2. Criar um teste unitário para verificar se a rota
+# está produzindo o resultado esperado
+
+# 3. Verificar se o código está no padrão do PyLint
+
+# 4. Enviar o código para o repositório (git push)
