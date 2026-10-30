@@ -79,3 +79,10 @@ def teste_tarefas_delete():
 
     resposta = CLIENT.get("/tarefas")
     assert resposta.json() == []
+
+# Teste da rota /autor
+def test_autor():
+    resposta = CLIENT.get("/autor")
+
+    assert resposta.status_code == 200
+    assert resposta.json() == {"mensagem": "Thionas Nascimento"}

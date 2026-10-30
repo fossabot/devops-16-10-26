@@ -51,7 +51,6 @@ async def post_tarefa(titulo: str, descricao: str):
     tarefa_nova = criar_tarefa(titulo, descricao)
 
     TAREFAS.append(tarefa_nova)
-
     return {"mensagem": "OK"}
 
 # GET /tarefas/{id_tarefa}: Visualizar tarefa específica
@@ -108,10 +107,14 @@ async def apagar_tarefa(id_tarefa: int):
         if id_tarefa == int(tarefa['id']):
             TAREFAS.pop(indice)
             return {"mensagem": "Tarefa apagada"}
-
         indice += 1
-
     return {"mensagem": "Tarefa não existe"}
+
+# GET /autor Retorna o nome do autor
+@APP.get("/autor")
+async def autor():
+    """ Rota para identificar o autor da aplicação. """
+    return {"mensagem": "Thionas Nascimento"}
 
 @APP.get("/")
 async def index():
