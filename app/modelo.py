@@ -27,3 +27,5 @@ class Tarefa(SQLModel, table=True):
         """Retorna ID da tarefa"""
         return self.id
     
+    
+    
