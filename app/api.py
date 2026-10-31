@@ -1,34 +1,15 @@
 """ Aplicação para o módulo de extensão DevOps """
 
 from datetime import datetime
+
 from fastapi import FastAPI
 import requests
 from requests.exceptions import ConnectionError as RequestConnectionError
 
+from app.modelo import Tarefa
+
 APP = FastAPI()
 TAREFAS = []
-
-# Estrutura da tarefa
-""" 
-{
-    "id" -> int,
-    "titulo" -> str,
-    "descricao" -> str,
-    "concluida" -> bool,
-    "criada_em" -> datetime
-}
-"""
-
-def criar_tarefa(titulo, descricao):
-    """ Função para criar uma tarefa e retorna um dicionário. """
-
-    return {
-        "id": len(TAREFAS),
-        "titulo": titulo,
-        "descricao": descricao,
-        "concluida": False,
-        "criada_em": datetime.now().isoformat(timespec="seconds")
-    }
 
 # GET /tarefas: Lista todas as tarefas (somente id e titulo)
 @APP.get("/tarefas")
@@ -37,8 +18,8 @@ async def tarefas():
     lista_somente_id_titulo = []
 
     for tarefa in TAREFAS:
-        id_tarefa = tarefa['id']
-        titulo_tarefa = tarefa['titulo']
+        id_tarefa = tarefa.id
+        titulo_tarefa = tarefa.titulo
 
         lista_somente_id_titulo.append({id_tarefa: titulo_tarefa})
 
@@ -46,15 +27,25 @@ async def tarefas():
 
 # POST /tarefas: Cria tarefa
 @APP.post("/tarefas", status_code=201)
-async def post_tarefa(titulo: str, descricao: str):
+async def post_tarefa(titulo: str, descricao: str = None):
     """ Rota para criar uma tarefa. """
-    tarefa_nova = criar_tarefa(titulo, descricao)
+    tarefa_nova = Tarefa(
+        id=len(TAREFAS),
+        titulo=titulo,
+        descricao=descricao,
+        data_criacao=datetime.now().isoformat(timespec="seconds"),
+    )
 
     TAREFAS.append(tarefa_nova)
+
     return {"mensagem": "OK"}
 
 # GET /tarefas/{id_tarefa}: Visualizar tarefa específica
-@APP.get("/tarefas/{id_tarefa}")
+@APP.get(
+    "/tarefas/{id_tarefa}",
+    response_model=Tarefa | dict[str, str],
+    response_model_exclude_none=True,
+)
 async def tarefa_especifica(id_tarefa: int):
     """ Rota para visualizar uma tarefa específica """
     # 1. Selecionar a tarefa de ID recebido como parâmetro
@@ -62,7 +53,7 @@ async def tarefa_especifica(id_tarefa: int):
     # 3. Caso a tarefa não exista, você tem que mostrar que a tarefa não existe
 
     for tarefa in TAREFAS:
-        if id_tarefa == int(tarefa["id"]):
+        if id_tarefa == tarefa.id:
             return tarefa
 
     return {"mensagem": "Tarefa não existe"}
@@ -77,14 +68,13 @@ async def concluir_tarefa(id_tarefa: int):
     # 4. Caso a tarefa não exista, você tem que mostrar que a tarefa não existe
 
     for tarefa in TAREFAS:
-        if id_tarefa == int(tarefa['id']) and tarefa['concluida'] is False:
-            tarefa['concluida'] = True
-            tarefa['concluida_em'] = datetime.now().isoformat(timespec='seconds')
-            titulo = tarefa['titulo']
+        if id_tarefa == tarefa.id and tarefa.concluida is False:
+            tarefa.finalizar()
+            titulo = tarefa.titulo
 
             try:
                 _ = requests.post(
-                    f"http://localhost:8000/notificar?id={id}&titulo={titulo}",
+                    f"http://localhost:8000/notificar?id={id_tarefa}&titulo={titulo}",
                     timeout=1
                 )
             except RequestConnectionError as e:
@@ -104,10 +94,12 @@ async def apagar_tarefa(id_tarefa: int):
 
     indice = 0
     for tarefa in TAREFAS:
-        if id_tarefa == int(tarefa['id']):
+        if id_tarefa == tarefa.id:
             TAREFAS.pop(indice)
             return {"mensagem": "Tarefa apagada"}
+
         indice += 1
+
     return {"mensagem": "Tarefa não existe"}
 
 @APP.get("/")
@@ -115,10 +107,12 @@ async def index():
     """ Rota raíz. """
     return {"mensagem": "Olá, mundo!"}
 
-# GET /autor Retorna o nome do autor
+
+# 1. Implementar uma rota chamada "/autor" que retorna
+# um dicionário no formato {"mensagem": SEU NOME COMPLETO}
 @APP.get("/autor")
 async def autor():
-    """ Rota para identificar o autor da aplicação. """
+    """ Rota para retornar o autor da aplicação """
     return {"mensagem": "Thionas Nascimento"}
 
 # 2. Criar um teste unitário para verificar se a rota

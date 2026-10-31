@@ -6,5 +6,3 @@ NOTIFICACAO = FastAPI()
 async def notificar(id: int, titulo: str):
     print(f"Tarefa '{titulo}' (id={id}) finalizada!")
     return {"mensagem": "OK"}
-
-    

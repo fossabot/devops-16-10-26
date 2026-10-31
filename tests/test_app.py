@@ -1,5 +1,5 @@
 from fastapi.testclient import TestClient
-from app import APP
+from app.api import APP
 from datetime import datetime
 
 CLIENT = TestClient(APP)
@@ -43,6 +43,7 @@ def test_tarefa_criada():
         "concluida": False,
         "criada_em": str(DATA),
     }
+
 # 3. Implementar um teste unitário para a rota /tarefas/{id} (PUT)
 def test_tarefas_put():
     global DATA_CONCLUSAO
@@ -70,7 +71,7 @@ def test_tarefas_get_id():
     assert resposta.json() == {"mensagem": "Tarefa não existe"}
 
 # 5. Implementar um teste unitário para a rota /tarefas/{id} (DELETE)
-def teste_tarefas_delete():
+def test_tarefas_delete():
     resposta = CLIENT.delete("/tarefas/1")
     assert resposta.json() == {"mensagem": "Tarefa não existe"}
 
