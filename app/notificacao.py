@@ -6,8 +6,7 @@ NOTIFICACAO = FastAPI()
 
 
 @NOTIFICACAO.post("/notificar")
-async def notificar(id: int, titulo: str):
+async def notificar(_id: int, titulo: str):
     """Rota para notificar"""
     print(f"Tarefa '{titulo}' (id={id}) finalizada!")
     return {"mensagem": "OK"}
-
