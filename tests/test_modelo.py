@@ -1,26 +1,31 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from app.modelo import Tarefa
 
+
 def criar_tarefa_mock():
-    return Tarefa(id=0, titulo="Tarefa teste", data_criacao=datetime.now().isoformat(timespec='seconds'))
+    return Tarefa(
+        titulo="Tarefa teste",
+        data_criacao=datetime.now().replace(microsecond=0),
+    )
+
 
 def test_nova_tarefa():
     t = criar_tarefa_mock()
 
-    assert t.id == 0
+    assert t.get_id() == None
     assert t.titulo == "Tarefa teste"
     assert t.descricao == None
-    assert t.data_criacao.isoformat() == datetime.now().isoformat(timespec='seconds')
+    assert t.data_criacao == datetime.now().replace(microsecond=0)
     assert t.data_conclusao == None
     assert t.concluida == False
 
+
 # Implementar teste unitário para verificar se a tarefa foi concluida
+
 
 def test_tarefa_concluida():
     t = criar_tarefa_mock()
 
     t.finalizar()
     assert t.concluida == True
-    assert t.data_conclusao.isoformat(timespec='seconds') == datetime.now().isoformat(
-        timespec='seconds'
-    )
+    assert t.data_conclusao == datetime.now().astimezone(timezone.utc).replace(microsecond=0)
