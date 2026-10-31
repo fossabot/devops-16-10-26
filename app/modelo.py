@@ -26,3 +26,4 @@ class Tarefa(SQLModel, table=True):
     def get_id(self):
         """Retorna ID da tarefa"""
         return self.id
+    
