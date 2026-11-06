@@ -2,12 +2,11 @@ fastapi[standard]
 httpx2
 pytest
 pytest-cov
-pylint  
+pylint
 bandit
 ruff
 sqlmodel
 sqlalchemy
 pymysql
-psycopg
-
+psycopg[binary]
 
